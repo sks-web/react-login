@@ -3,33 +3,41 @@ import styles from "./registration.module.css";
 import { useEffect, useState } from "react";
 import Input from "../Elements/input";
 
-export default function Registration(props) {
-  const [newUser, setNewUser] = useState({
-    fullName: "",
-    userName: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [isFormSubmit, setIsFormSubmit] = useState(false);
+const initialValue = {
+  fullName: "",
+  userName: "",
+  password: "",
+  confirmPassword: "",
+};
 
-  // Vaidate Form
-  const validateFrom = function ({
+export default function Registration(props) {
+  const [newUser, setNewUser] = useState(initialValue);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Validation
+  const validateForm = function ({
     fullName,
     userName,
     password,
     confirmPassword,
   }) {
-    let err = {};
+    const err = {};
+
     if (!fullName) {
-      err.fullname = "Name required";
+      err.fullName = "Name required";
     } else if (fullName.length <= 3) {
-      err.fullname = "Name must be greater then 3 letter";
+      console.log(fullName.length);
+      err.fullName = "Name must be greater then 3 letter";
     }
 
     if (!userName) {
       err.userName = "Email is required.";
-    } else if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(userName)) {
+    } else if (
+      !/^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        userName
+      )
+    ) {
       err.userName = "Enter valid email ID";
     }
 
@@ -49,20 +57,18 @@ export default function Registration(props) {
     } else if (confirmPassword !== password) {
       err.confirmPassword = "Confirm password does not matched with password";
     }
-
-    if (Object.keys(err).length === 0) {
-      setIsFormSubmit(true);
-    } else {
-      setIsFormSubmit(false);
-    }
-
     return err;
   };
 
   // Submit button
   const onFormSubmit = function (e) {
     e.preventDefault();
-    setErrors(validateFrom(newUser));
+    setErrors(validateForm(newUser));
+    setIsSubmitting(true);
+    if (Object.keys(errors).length === 0 && isSubmitting) {
+      setNewUser(initialValue);
+      console.log("Form submitted");
+    }
   };
 
   // updating newUser Details state
@@ -70,41 +76,40 @@ export default function Registration(props) {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
   };
 
+  // checking and validating
   useEffect(() => {
-    if (isFormSubmit) {
-      const user = newUser;
-      setNewUser({});
-      return props.addNewUserDetails(user, "login");
+    if (Object.keys(errors).length !== 0 && isSubmitting) {
+      setErrors(validateForm(newUser));
     } else {
-      console.log("Form didnt' submit");
+      setIsSubmitting(true);
     }
-  }, [isFormSubmit]);
+  }, [newUser]);
 
   return (
-    <form onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit} autoComplete="new-off">
       <h2>New Registration</h2>
       <hr />
       <label>
         <strong>Full Name:</strong>{" "}
         <Input
           type="text"
-          id="Rfullname"
+          id="fullname"
           placeholder="Enter Name"
           onChange={onInputChange}
           name="fullName"
-          value={newUser.fullname}
+          value={newUser.fullName}
         />
-        {errors.fullname && <p className={styles.err}>{errors.fullname}</p>}
+        {errors.fullName && <p className={styles.err}>{errors.fullName}</p>}
       </label>
       <label>
         <strong>Email:</strong>{" "}
         <Input
           type="text"
-          id="Rusername"
+          id="username"
           placeholder="Enter Email"
           onChange={onInputChange}
           name="userName"
-          value={newUser.username}
+          value={newUser.userName}
         />
         {errors.userName && <p className={styles.err}>{errors.userName}</p>}
       </label>
@@ -113,7 +118,7 @@ export default function Registration(props) {
         <strong>Password:</strong>{" "}
         <Input
           type="password"
-          id="Rpassword"
+          id="password"
           placeholder="********"
           onChange={onInputChange}
           value={newUser.password}
@@ -125,7 +130,7 @@ export default function Registration(props) {
         <strong>Confirm Password:</strong>{" "}
         <Input
           type="password"
-          id="Rconfirmpassword"
+          id="confirmpassword"
           placeholder="********"
           onChange={onInputChange}
           value={newUser.confirmPassword}

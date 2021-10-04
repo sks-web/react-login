@@ -9,6 +9,7 @@ export default function Input(props) {
       onChange={props.onChange}
       name={props.name}
       value={props.value}
+      autoComplete="new-off"
     />
   );
 }
