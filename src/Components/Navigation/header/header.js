@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, Segment } from "semantic-ui-react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
@@ -9,14 +9,11 @@ import Login from "../../Login/login";
 import Register from "../../Register/register";
 
 function Header() {
-  console.log(window.location.pathname);
   const [menuItem, setMenuItem] = useState(window.location.pathname);
   const handleActiveItemClick = (e, { name }) => {
     setMenuItem(name);
   };
-  const redirectPage = function (data) {
-    setMenuItem(data);
-  };
+
   return (
     <Router>
       <Segment inverted>
@@ -30,7 +27,7 @@ function Header() {
               Home
             </Menu.Item>
           </Link>
-          <Link to="/contact">
+          <Link exact to="/contact">
             <Menu.Item
               name="/contact"
               active={menuItem === "/contact"}
@@ -90,7 +87,7 @@ function Header() {
         </Route>
         <Route path="/register">
           {" "}
-          <Register redirectPage={redirectPage} />{" "}
+          <Register updateMenu={setMenuItem} />{" "}
         </Route>
       </Switch>
     </Router>

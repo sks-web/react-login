@@ -1,3 +1,9 @@
-export default function AboutUs() {
-  return <h1>About Us</h1>;
+import { useHistory } from "react-router-dom";
+export default function AboutUs(props) {
+  const history = useHistory();
+  const btnClickEvent = function () {
+    history.push("/contact");
+    return props.updateMenu("/contact");
+  };
+  return <button onClick={btnClickEvent}>Click Me</button>;
 }

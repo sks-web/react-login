@@ -1,9 +1,8 @@
 import styles from "./login.module.css";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Input from "../Elements/input";
-import loginContext from "../context/context";
 
 const initialValue = {
   userName: "",
@@ -61,8 +60,6 @@ function Login(props) {
   useEffect(() => {
     if (Object.keys.length !== 0 && isSubmitting) {
       setErrors(validateForm(userDetails));
-    } else {
-      setIsSubmitting(true);
     }
   }, [userDetails]);
 

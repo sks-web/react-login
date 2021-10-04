@@ -2,6 +2,7 @@ import styles from "./registration.module.css";
 
 import { useEffect, useState } from "react";
 import Input from "../Elements/input";
+import { useHistory } from "react-router-dom";
 
 const initialValue = {
   fullName: "",
@@ -14,6 +15,7 @@ export default function Registration(props) {
   const [newUser, setNewUser] = useState(initialValue);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  let history = useHistory();
 
   // Validation
   const validateForm = function ({
@@ -65,9 +67,12 @@ export default function Registration(props) {
     e.preventDefault();
     setErrors(validateForm(newUser));
     setIsSubmitting(true);
+    console.log(errors, isSubmitting);
     if (Object.keys(errors).length === 0 && isSubmitting) {
+      history.push("/login");
       setNewUser(initialValue);
       console.log("Form submitted");
+      return props.updateMenu("/login");
     }
   };
 
@@ -79,9 +84,10 @@ export default function Registration(props) {
   // checking and validating
   useEffect(() => {
     if (Object.keys(errors).length !== 0 && isSubmitting) {
+      /**
+       * Checking validation when after submitting you are getting error
+       */
       setErrors(validateForm(newUser));
-    } else {
-      setIsSubmitting(true);
     }
   }, [newUser]);
 
