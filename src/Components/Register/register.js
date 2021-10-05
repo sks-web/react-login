@@ -59,6 +59,16 @@ export default function Registration(props) {
     } else if (confirmPassword !== password) {
       err.confirmPassword = "Confirm password does not matched with password";
     }
+
+    /**
+     * Below condition is for updating of the isSubmitting to false if not false then it will automatically submit the form using useEffect once no error found.
+     * if true form will submit automatically without pressing submit key (that is worng way)
+     * if false form will wait to till submit button is clicked and again isSubmitting is true.
+     */
+    if (Object.keys(err).length === 0) {
+      setIsSubmitting(false);
+    }
+
     return err;
   };
 
@@ -67,13 +77,6 @@ export default function Registration(props) {
     e.preventDefault();
     setErrors(validateForm(newUser));
     setIsSubmitting(true);
-    console.log(errors, isSubmitting);
-    if (Object.keys(errors).length === 0 && isSubmitting) {
-      history.push("/login");
-      setNewUser(initialValue);
-      console.log("Form submitted");
-      return props.updateMenu("/login");
-    }
   };
 
   // updating newUser Details state
@@ -90,6 +93,20 @@ export default function Registration(props) {
       setErrors(validateForm(newUser));
     }
   }, [newUser]);
+
+  /**
+   * Below useEffect is to prevent form from submitting if no error and isSubmitting is true then form will submit
+   */
+  useEffect(() => {
+    console.log("Inside", errors, isSubmitting);
+    if (Object.keys(errors).length === 0 && isSubmitting) {
+      setNewUser(initialValue);
+      setIsSubmitting(false);
+      console.log("Form submitted");
+      history.push("/login");
+      return props.updateMenu("/login");
+    }
+  }, [errors]);
 
   return (
     <form onSubmit={onFormSubmit} autoComplete="new-off">

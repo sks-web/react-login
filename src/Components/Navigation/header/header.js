@@ -7,10 +7,18 @@ import Contact from "../../Contact/contact";
 import AboutUs from "../../AboutUs/aboutus";
 import Login from "../../Login/login";
 import Register from "../../Register/register";
+import Dashboard from "../../Dashboard/dashboard";
+import PrivateRoute from "../../PrivateRoute/privateRoute";
 
 function Header() {
+  const [isAuth, setIsAuth] = useState(false);
   const [menuItem, setMenuItem] = useState(window.location.pathname);
   const handleActiveItemClick = (e, { name }) => {
+    if (name === "/logout") {
+      setIsAuth(false);
+      window.history.pushState(null, "login");
+      setMenuItem("/login");
+    }
     setMenuItem(name);
   };
 
@@ -45,26 +53,47 @@ function Header() {
               About Us
             </Menu.Item>
           </Link>
-          <Menu.Menu position="right">
-            <Link to="/login">
+          <Link to="/dashboard">
+            <Menu.Item
+              name="/dashboard"
+              active={menuItem === "/dashboard"}
+              onClick={handleActiveItemClick}
+            >
+              Private Dashboard
+            </Menu.Item>
+          </Link>
+          {!isAuth ? (
+            <Menu.Menu position="right">
+              <Link to="/login">
+                <Menu.Item
+                  name="/login"
+                  active={menuItem === "/login"}
+                  onClick={handleActiveItemClick}
+                >
+                  Login
+                </Menu.Item>
+              </Link>
+              <Link to="/register">
+                <Menu.Item
+                  name="/register"
+                  active={menuItem === "/register"}
+                  onClick={handleActiveItemClick}
+                >
+                  Register
+                </Menu.Item>
+              </Link>
+            </Menu.Menu>
+          ) : (
+            <Menu.Menu position="right">
               <Menu.Item
-                name="/login"
-                active={menuItem === "/login"}
+                name="/logout"
+                active={menuItem === "/logout"}
                 onClick={handleActiveItemClick}
               >
-                Login
+                Logout
               </Menu.Item>
-            </Link>
-            <Link to="/register">
-              <Menu.Item
-                name="/register"
-                active={menuItem === "/register"}
-                onClick={handleActiveItemClick}
-              >
-                Register
-              </Menu.Item>
-            </Link>
-          </Menu.Menu>
+            </Menu.Menu>
+          )}
         </Menu>
       </Segment>
 
@@ -83,12 +112,15 @@ function Header() {
         </Route>
         <Route path="/login">
           {" "}
-          <Login />{" "}
+          <Login setIsAuth={setIsAuth} updateDashbaord={setMenuItem} />{" "}
         </Route>
         <Route path="/register">
           {" "}
           <Register updateMenu={setMenuItem} />{" "}
         </Route>
+        <PrivateRoute path="/dashboard" isAuth={isAuth} redirect={setMenuItem}>
+          <Dashboard />
+        </PrivateRoute>
       </Switch>
     </Router>
   );

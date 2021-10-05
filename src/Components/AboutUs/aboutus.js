@@ -3,7 +3,6 @@ export default function AboutUs(props) {
   const history = useHistory();
   const btnClickEvent = function () {
     history.push("/contact");
-    return props.updateMenu("/contact");
   };
   return <button onClick={btnClickEvent}>Click Me</button>;
 }
