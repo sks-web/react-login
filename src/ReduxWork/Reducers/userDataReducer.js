@@ -6,7 +6,7 @@ function userDataReducer(
       fullName: "SACHI KANTA SAHU",
       userName: "sahu.sachikanta02@gmail.com",
       password: "Sachikanta@02",
-      confirmPassword: "Sachikanta@02",
+      confirmPassword: "Sachisahu@02",
     },
   ],
   action
