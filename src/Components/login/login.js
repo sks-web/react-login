@@ -1,6 +1,7 @@
 import styles from "./login.module.css";
 
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Input from "../Elements/input";
@@ -14,7 +15,9 @@ function Login(props) {
   const [userDetails, setUserDetails] = useState(initialValue);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
   const history = useHistory();
+  const usersData = useSelector((state) => state.userDatabase);
 
   // Form Validation
   const validateForm = function ({ userName, password }) {
@@ -68,22 +71,45 @@ function Login(props) {
     }
   }, [userDetails]);
 
+  function validateUser(loginUser, userData) {
+    const s = userData.find((el) => el.userName === loginUser.userName);
+    if (s) {
+      if (s.password === loginUser.password) {
+        console.log("Form is submitted");
+        dispatch({
+          type: "LOGGEDIN",
+          user: { isAuth: true, authUser: s },
+        });
+        history.push("/dashboard");
+        dispatch({ type: "CHANGE_TAB", val: "/dashboard" });
+        setUserDetails(initialValue);
+        setIsSubmitting(false);
+      } else {
+        setErrors({ uni: "Please enter correct Email or Password" });
+      }
+    } else {
+      setErrors({ uni: "Please enter correct Email or Password" });
+    }
+  }
+
   /**
    * This useEffect is controlling submit button when if no error found and isSubmitting is true then only form will submit
    */
   useEffect(() => {
     if (Object.keys(errors).length === 0 && isSubmitting) {
-      console.log("Form is submitted");
+      validateUser(userDetails, usersData);
       setUserDetails(initialValue);
       setIsSubmitting(false);
-      history.push("/dashboard");
-      props.updateDashbaord("/dashboard");
-      props.setIsAuth(true);
     }
   }, [errors]);
 
   return (
     <form onSubmit={onFormSubmit} method="POST">
+      {errors.uni && (
+        <p className={styles.err} style={{ textAlign: "center" }}>
+          {errors.uni}
+        </p>
+      )}
       <label>
         <strong>E mail:</strong>{" "}
         <Input

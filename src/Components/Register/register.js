@@ -2,6 +2,7 @@ import styles from "./registration.module.css";
 
 import { useEffect, useState } from "react";
 import Input from "../Elements/input";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 const initialValue = {
@@ -11,11 +12,12 @@ const initialValue = {
   confirmPassword: "",
 };
 
-export default function Registration(props) {
+function Registration(props) {
   const [newUser, setNewUser] = useState(initialValue);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  let history = useHistory();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   // Validation
   const validateForm = function ({
@@ -29,7 +31,6 @@ export default function Registration(props) {
     if (!fullName) {
       err.fullName = "Name required";
     } else if (fullName.length <= 3) {
-      console.log(fullName.length);
       err.fullName = "Name must be greater then 3 letter";
     }
 
@@ -98,13 +99,14 @@ export default function Registration(props) {
    * Below useEffect is to prevent form from submitting if no error and isSubmitting is true then form will submit
    */
   useEffect(() => {
-    console.log("Inside", errors, isSubmitting);
     if (Object.keys(errors).length === 0 && isSubmitting) {
-      setNewUser(initialValue);
+      dispatch({ type: "SAVE", userData: newUser });
       setIsSubmitting(false);
       console.log("Form submitted");
-      history.push("/login");
-      return props.updateMenu("/login");
+      // history.push("/login");
+      // dispatch({ type: "CHANGE_TAB", val: "/login" });
+      setNewUser(initialValue);
+      console.log("HI i am in register useffect");
     }
   }, [errors]);
 
@@ -169,3 +171,5 @@ export default function Registration(props) {
     </form>
   );
 }
+
+export default Registration;

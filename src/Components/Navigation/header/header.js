@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Menu, Segment } from "semantic-ui-react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Switch, Route, Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import Home from "../../Home/home";
 import Contact from "../../Contact/contact";
@@ -11,19 +11,19 @@ import Dashboard from "../../Dashboard/dashboard";
 import PrivateRoute from "../../PrivateRoute/privateRoute";
 
 function Header() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [menuItem, setMenuItem] = useState(window.location.pathname);
+  const menuItem = useSelector((state) => state.navTab.currentTab);
+  const userAuth = useSelector((state) => state.auth.isAuth);
+  const dispatch = useDispatch();
   const handleActiveItemClick = (e, { name }) => {
     if (name === "/logout") {
-      setIsAuth(false);
-      window.history.pushState(null, "login");
-      setMenuItem("/login");
+      dispatch({ type: "LOGGEDOUT" });
+      dispatch({ type: "CHANGE_TAB", val: name });
     }
-    setMenuItem(name);
+    dispatch({ type: "CHANGE_TAB", val: name });
   };
 
   return (
-    <Router>
+    <>
       <Segment inverted>
         <Menu inverted secondary>
           <Link to="/">
@@ -62,7 +62,7 @@ function Header() {
               Private Dashboard
             </Menu.Item>
           </Link>
-          {!isAuth ? (
+          {!userAuth ? (
             <Menu.Menu position="right">
               <Link to="/login">
                 <Menu.Item
@@ -112,17 +112,17 @@ function Header() {
         </Route>
         <Route path="/login">
           {" "}
-          <Login setIsAuth={setIsAuth} updateDashbaord={setMenuItem} />{" "}
+          <Login />{" "}
         </Route>
         <Route path="/register">
           {" "}
-          <Register updateMenu={setMenuItem} />{" "}
+          <Register />{" "}
         </Route>
-        <PrivateRoute path="/dashboard" isAuth={isAuth} redirect={setMenuItem}>
+        <PrivateRoute path="/dashboard" isAuth={userAuth}>
           <Dashboard />
         </PrivateRoute>
       </Switch>
-    </Router>
+    </>
   );
 }
 
