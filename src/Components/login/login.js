@@ -11,7 +11,7 @@ const initialValue = {
   password: "",
 };
 
-function Login(props) {
+function Login() {
   const [userDetails, setUserDetails] = useState(initialValue);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);

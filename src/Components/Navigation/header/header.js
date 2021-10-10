@@ -1,5 +1,5 @@
 import { Menu, Segment } from "semantic-ui-react";
-import { BrowserRouter as Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import Home from "../../Home/home";
@@ -14,6 +14,8 @@ function Header() {
   const menuItem = useSelector((state) => state.navTab.currentTab);
   const userAuth = useSelector((state) => state.auth.isAuth);
   const dispatch = useDispatch();
+  console.log("[HEADER]", menuItem);
+
   const handleActiveItemClick = (e, { name }) => {
     if (name === "/logout") {
       dispatch({ type: "LOGGEDOUT" });
@@ -35,7 +37,7 @@ function Header() {
               Home
             </Menu.Item>
           </Link>
-          <Link exact to="/contact">
+          <Link to="/contact">
             <Menu.Item
               name="/contact"
               active={menuItem === "/contact"}
@@ -98,11 +100,11 @@ function Header() {
       </Segment>
 
       <Switch>
-        <Route exact path="/">
+        <Route exact path="/" component={Home}>
           {" "}
           <Home />{" "}
         </Route>
-        <Route path="/contact">
+        <Route path="/contact" component={Contact}>
           {" "}
           <Contact />{" "}
         </Route>

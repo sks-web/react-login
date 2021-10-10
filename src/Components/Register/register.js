@@ -2,7 +2,7 @@ import styles from "./registration.module.css";
 
 import { useEffect, useState } from "react";
 import Input from "../Elements/input";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 const initialValue = {
@@ -103,8 +103,8 @@ function Registration(props) {
       dispatch({ type: "SAVE", userData: newUser });
       setIsSubmitting(false);
       console.log("Form submitted");
-      // history.push("/login");
-      // dispatch({ type: "CHANGE_TAB", val: "/login" });
+      history.push("/login");
+      dispatch({ type: "CHANGE_TAB", val: "/login" });
       setNewUser(initialValue);
       console.log("HI i am in register useffect");
     }

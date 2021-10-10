@@ -11,7 +11,6 @@ function userDataReducer(
   ],
   action
 ) {
-  console.log("[userDataReducer", action);
   switch (action.type) {
     case "SAVE":
       return [...currentState, action.userData];
